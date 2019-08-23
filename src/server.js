@@ -13,4 +13,4 @@ server.use(cors());
 server.use(express.json());//aqui o express vai entender o JSON
 server.use(routes);
 
-server.listen(3333);
+server.listen( 3333);
