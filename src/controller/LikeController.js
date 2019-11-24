@@ -2,6 +2,7 @@ const Dev = require("../model/Dev");
 
 module.exports = {
     async store(req, res){
+        console.log(req.io, req.connectedUsers);
 
         const {devId} = req.params;
         const {user} = req.headers;//pega os dados enviados pelo header
@@ -14,7 +15,16 @@ module.exports = {
         }
 
         if(targetDev.likes.includes(loggedDev._id)){//verifica se o id ja sofreu like
-            console.log("Deu match");
+            const loggedSocket = req.connectedUsers[user];
+            const targetSocket = req.connectedUsers[devId];
+
+            if(loggedSocket){
+                req.io.to(loggedSocket).emit('match', targetDev);//estou avisando que o usuario logado deu um match no targetDev
+            }
+
+            if(targetSocket){
+                req.io.to(targetSocket).emit('match', loggedDev);//estou avisando que o target logado deu match com o loggedDev
+            }
         }
 
         loggedDev.likes.push(targetDev._id);
